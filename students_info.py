@@ -43,10 +43,10 @@ class Student:
 
     def __lt__(self, other):
         if isinstance(other, Student):
+            rates_self = [x for value in self.grades.values() for x in value]
+            rates_other = [x for value in other.grades.values() for x in value]
             try:
-                rates_self = [x for value in self.grades.values() for x in value]
                 average_self = sum(rates_self) / len(rates_self)
-                rates_other = [x for value in other.grades.values() for x in value]
                 average_other = sum(rates_other) / len(rates_other)
             except ZeroDivisionError:
                 if len(rates_self) == 0:
@@ -58,10 +58,10 @@ class Student:
 
     def __le__(self, other):
         if isinstance(other, Student):
+            rates_self = [x for value in self.grades.values() for x in value]
+            rates_other = [x for value in other.grades.values() for x in value]
             try:
-                rates_self = [x for value in self.grades.values() for x in value]
                 average_self = sum(rates_self) / len(rates_self)
-                rates_other = [x for value in other.grades.values() for x in value]
                 average_other = sum(rates_other) / len(rates_other)
             except ZeroDivisionError:
                 if len(rates_self) == 0:
@@ -73,10 +73,10 @@ class Student:
 
     def __eq__(self, other):
         if isinstance(other, Student):
+            rates_self = [x for value in self.grades.values() for x in value]
+            rates_other = [x for value in other.grades.values() for x in value]
             try:
-                rates_self = [x for value in self.grades.values() for x in value]
                 average_self = sum(rates_self) / len(rates_self)
-                rates_other = [x for value in other.grades.values() for x in value]
                 average_other = sum(rates_other) / len(rates_other)
             except ZeroDivisionError:
                 if len(rates_self) == 0:
@@ -115,10 +115,10 @@ class Lecturer(Mentor):
 
     def __lt__(self, other):
         if isinstance(other, Lecturer):
+            self_rates = [x for value in self.grades.values() for x in value]
+            other_rates = [x for value in other.grades.values() for x in value]
             try:
-                self_rates = [x for value in self.grades.values() for x in value]
                 average_self = sum(self_rates) / len(self_rates)
-                other_rates = [x for value in other.grades.values() for x in value]
                 average_other = sum(other_rates) / len(other_rates)
             except ZeroDivisionError:
                 if len(self_rates) == 0:
@@ -130,10 +130,10 @@ class Lecturer(Mentor):
 
     def __le__(self, other):
         if isinstance(other, Lecturer):
+            self_rates = [x for value in self.grades.values() for x in value]
+            other_rates = [x for value in other.grades.values() for x in value]
             try:
-                self_rates = [x for value in self.grades.values() for x in value]
                 average_self = sum(self_rates) / len(self_rates)
-                other_rates = [x for value in other.grades.values() for x in value]
                 average_other = sum(other_rates) / len(other_rates)
             except ZeroDivisionError:
                 if len(self_rates) == 0:
@@ -145,10 +145,10 @@ class Lecturer(Mentor):
 
     def __eq__(self, other):
         if isinstance(other, Lecturer):
+            self_rates = [x for value in self.grades.values() for x in value]
+            other_rates = [x for value in other.grades.values() for x in value]
             try:
-                self_rates = [x for value in self.grades.values() for x in value]
                 average_self = sum(self_rates) / len(self_rates)
-                other_rates = [x for value in other.grades.values() for x in value]
                 average_other = sum(other_rates) / len(other_rates)
             except ZeroDivisionError:
                 if len(self_rates) == 0:
@@ -181,43 +181,93 @@ class Reviewer(Mentor):
         return res
 
 
+def count_average_students(students, course):
+    average_grades = []
+    for student in students:
+        if isinstance(student, Student) and course in student.grades:
+            # Review for students.courses_in_progress is in def rate_hw
+            # def rate_hw add course to student.grades so student.grades[course] > 0
+            student_average = sum(student.grades[course]) / len(student.grades[course])
+            average_grades.append(student_average)
+    if len(average_grades) > 0:
+        average_course = f"Средний балл на курсе {course}: {sum(average_grades) / len(average_grades)}"
+    else:
+        average_course = f"Невозможно рассчитать средний балл на курсе {course}, оценок пока нет!"
+    return average_course
+
+
+def count_average_lecturers(lecturers, course):
+    average_grades = []
+    for lecturer in lecturers:
+        if isinstance (lecturer, Lecturer) and course in lecturer.grades:
+            # Review for lecturer.courses_attached is in def rate_lecture
+            # def rate_lecture add course to lecturer.grades so lecturer.grades[course] > 0
+            lecturer_average = sum(lecturer.grades[course]) / len(lecturer.grades[course])
+            average_grades.append(lecturer_average)
+    if len(average_grades) > 0:
+        average_course = f"Средняя оценка за лекции по курсу {course}: {sum(average_grades) / len(average_grades)}"
+    else:
+        average_course = f"Лекции по курсу {course} пока не оценили, невозможно рассчитать среднюю оценку!"
+    return average_course
+
+
+students = []
+lecturers = []
+
+
 student_eman = Student('Ruoy', 'Eman', 'male')
 student_wang = Student('Li', 'Wang', 'male')
+students.append(student_wang)
+students.append(student_eman)
 
 reviewer_karr = Reviewer('Anna', 'Karr')
 reviewer_sotkin = Reviewer('Alexander', 'Sotkin')
 
 lecturer_lori = Lecturer('Lucky', 'Lori')
 lecturer_dann = Lecturer('Emil', 'Dann')
+lecturers.append(lecturer_dann)
+lecturers.append(lecturer_lori)
 
 student_eman.courses_in_progress += ['Python', 'JavaScript', 'Web-design']
 student_wang.courses_in_progress += ['Web-design']
-# student_eman.finished_courses += ['Java']
-student_wang.finished_courses += ['C#', 'Python']
+student_wang.finished_courses += ['Testing', 'Python']
 
 reviewer_karr.courses_attached += ['Python']
-reviewer_sotkin.courses_attached += ['JavaScript', 'Web-design']
+reviewer_sotkin.courses_attached += ['Python', 'JavaScript', 'Web-design']
 
-lecturer_lori.courses_attached += ['Python']
+lecturer_lori.courses_attached += ['Python', 'Git']
 lecturer_dann.courses_attached += ['JavaScript', 'Web-design']
 
 student_eman.rate_lecture(lecturer_lori, 'Python', 10)
 student_wang.rate_lecture(lecturer_dann, 'Web-design', 9)
-
 student_wang.rate_lecture(lecturer_lori, 'Python', 8)
+student_eman.rate_lecture(lecturer_dann, 'Python', 10)
+
 reviewer_karr.rate_hw(student_eman, 'Python', 10)
 reviewer_karr.rate_hw(student_wang, 'Python', 9)
-reviewer_sotkin.rate_hw(student_eman, 'JavaScript', 7)
+reviewer_sotkin.rate_hw(student_eman, 'Python', 7)
 reviewer_sotkin.rate_hw(student_wang, 'Web-design', 10)
-# reviewer_sotkin.rate_hw(lecturer_lori, 'C++', 9)
 
-print(student_wang.grades)
-print(student_eman.grades)
 print(student_eman)
 print(student_wang)
 print(lecturer_lori)
 print(lecturer_dann)
 print(reviewer_karr)
 print(reviewer_sotkin)
+print('------------------------')
 print(student_eman == student_wang)
+print(student_eman > student_wang)
+print(student_eman < student_wang)
+print(lecturer_lori < lecturer_dann)
+print(lecturer_lori >= lecturer_dann)
+print(lecturer_lori == lecturer_dann)
 print(student_eman == lecturer_lori)
+print(student_eman == reviewer_karr)
+print('------------------------')
+print(reviewer_sotkin.rate_hw(lecturer_lori, 'C++', 9))
+print(student_eman.rate_lecture(lecturer_dann, 'Python', 10))
+print(count_average_students(students, 'Python'))
+print(count_average_students(students, 'C#'))
+print(count_average_lecturers(lecturers, 'Python'))
+print(count_average_lecturers(lecturers, 'Web-design'))
+print(count_average_lecturers(lecturers, 'Git'))
